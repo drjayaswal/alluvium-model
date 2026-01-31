@@ -30,3 +30,7 @@ Thumbs.db
 # --- Databases ---
 *.sqlite3
 *.db
+
+# Misc
+*.txt
+/nltk*
