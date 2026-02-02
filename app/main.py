@@ -37,10 +37,10 @@ async def analyze_s3(data: dict):
             s3_client.delete_object(Bucket=bucket_name, Key=s3_key)
         except Exception as delete_err:
             raise Exception({"message":delete_err})
+        print(results)
         return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/analyze-drive")
 async def analyze_drive(data: dict):
@@ -65,6 +65,9 @@ async def analyze_drive(data: dict):
             if len(resp.content) < 200:
                  raise Exception("File content too small; likely a failed download.")
             resume_text = extract.text(resp.content, target_mime)
-        return await process(resume_text, description, filename)
+        results = await process(resume_text, description, filename)
+        print(results)
+        return results
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
