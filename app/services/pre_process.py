@@ -4,10 +4,9 @@ import io
 import nltk
 import httpx
 
-nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
-nltk.data.path.append(nltk_data_path)
-nltk.download('punkt')
-nltk.download('punkt_tab')
+nltk_data_path = os.getenv("NLTK_DATA", "/home/user/app/nltk_data")
+if nltk_data_path not in nltk.data.path:
+    nltk.data.path.append(nltk_data_path)
 
 from docx import Document
 from PyPDF2 import PdfReader

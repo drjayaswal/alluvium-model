@@ -3,10 +3,10 @@ import urllib.parse
 import nltk
 import os
 
-nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
-nltk.data.path.append(nltk_data_path)
-nltk.download('punkt')
-nltk.download('punkt_tab')
+nltk_data_path = os.getenv("NLTK_DATA", "/home/user/app/nltk_data")
+if nltk_data_path not in nltk.data.path:
+    nltk.data.path.append(nltk_data_path)
+
 from app.config import settings
 from app.libs.aws_client import s3_client
 from app.services.process import process

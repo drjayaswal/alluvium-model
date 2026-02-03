@@ -2,38 +2,40 @@
 FROM python:3.11-bookworm AS builder
 WORKDIR /app
 COPY requirements.txt .
+# Install dependencies into a temporary location
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # --- Runner Stage ---
 FROM python:3.11-slim-bookworm AS runner
 
-# Install runtime dependencies
+# Install necessary system libraries for ML (like libgomp for scikit-learn)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user for Hugging Face security
+# Create a non-root user (Required for Hugging Face)
 RUN useradd -m -u 1000 user
 USER user
 ENV HOME=/home/user \
-    PATH=/home/user/.local/bin:$PATH
+    PATH=/home/user/.local/bin:$PATH \
+    PYTHONUNBUFFERED=1 \
+    NLTK_DATA=/home/user/app/nltk_data
 
 WORKDIR $HOME/app
 
-# Copy installed packages and code
+# Copy installed packages from builder
 COPY --from=builder /install /usr/local
+# Copy your application code
 COPY --chown=user . .
 
-# Environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV NLTK_DATA=$HOME/app/nltk_data
+# PRE-DOWNLOAD ALL NLTK DATA
+# Doing this here prevents runtime errors and timeouts
+RUN python -m nltk.downloader -d $HOME/app/nltk_data \
+    punkt punkt_tab averaged_perceptron_tagger_eng wordnet omw-1.4 stopwords
 
-# Pre-download NLTK data into the image
-RUN python -m nltk.downloader -d $HOME/app/nltk_data punkt punkt_tab averaged_perceptron_tagger_eng wordnet omw-1.4 stopwords
-
-# Hugging Face Spaces specifically use port 7860
+# Hugging Face Spaces must use port 7860
 EXPOSE 7860
 
-# Start Uvicorn on 7860
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# IMPORTANT: If your main.py is inside the 'app' folder, use app.main:app
+# If main.py is in the root directory, use main:app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]

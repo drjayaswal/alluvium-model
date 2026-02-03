@@ -1,3 +1,12 @@
+---
+title: BiasBreaker ML Server
+emoji: 🚀
+colorFrom: blue
+colorTo: red
+sdk: docker
+app_port: 7860
+---
+
 # BiasBreaker ML Server
 
 A machine learning server for the BiasBreaker project that detects and mitigates bias in AI systems.

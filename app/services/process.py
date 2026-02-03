@@ -7,17 +7,15 @@ from app.services.pre_process import filter_noise,get_info
 import nltk
 import os
 
-nltk_data_path = os.path.join(os.getcwd(), "nltk_data")
-nltk.data.path.append(nltk_data_path)
-nltk.download('punkt')
-nltk.download('punkt_tab')
-
+nltk_data_path = os.getenv("NLTK_DATA", "/home/user/app/nltk_data")
+if nltk_data_path not in nltk.data.path:
+    nltk.data.path.append(nltk_data_path)
 
 try:
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_md")
 except:
-    os.system("python -m spacy download en_core_web_sm")
-    nlp = spacy.load("en_core_web_sm")
+    os.system("python -m spacy download en_core_web_md")
+    nlp = spacy.load("en_core_web_md")
 data_path = os.path.join(os.getcwd(), "nltk_data")
 if data_path not in nltk.data.path:
     nltk.data.path.append(data_path)
