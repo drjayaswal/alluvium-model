@@ -164,7 +164,7 @@ async def process_video(url: str, source_id: str):
 
 @app.get("/")
 def read_root():
-    return {"status": "BiasBreaker ML Server is running..."}
+    return {"status": "Basal ML Server is running..."}
 
 @app.get("/health")
 async def health_check():
