@@ -2,9 +2,10 @@
 title: Alluvium Model
 emoji: ⚙️
 colorFrom: indigo
-colorTo: rose
+colorTo: red
 sdk: docker
 app_port: 7860
+pinned: false
 ---
 
 # Alluvium ML Server
